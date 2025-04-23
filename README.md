@@ -14,11 +14,6 @@ An interactive and beginner-friendly web app to calculate and visualize the effi
 
 ---
 
-## 🚀 How to Run Locally
 
-### 1. Clone the repository
-```bash
-git clone https://github.com/your-username/pv-efficiency-calculator.git
-cd pv-efficiency-calculator
 
 
