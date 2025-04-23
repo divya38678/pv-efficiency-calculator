@@ -20,3 +20,7 @@ An interactive and beginner-friendly web app to calculate and visualize the effi
 ```bash
 git clone https://github.com/your-username/pv-efficiency-calculator.git
 cd pv-efficiency-calculator
+
+### 2. (Optional) Create a virtual environment
+python -m venv venv
+venv\Scripts\activate  # On Windows
