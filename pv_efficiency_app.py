@@ -65,7 +65,88 @@ df = pd.DataFrame({
 st.dataframe(df)
 
 csv = df.to_csv(index=False).encode('utf-8')
+
+import React, { useState } from 'react';
+import './Login.css'; // reusing same styles
+
+const Register = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleRegister = (e) => {
+    e.preventDefault();
+    console.log("Registering:", { username, password });
+    // Add your registration logic here (API call etc.)
+  };
+
+  return (
+    <div className="login-container">
+      <h2>Register</h2>
+      <input
+        type="text"
+        placeholder="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <button onClick={handleRegister}>Register</button>
+    </div>
+  );
+};
+
+export default Register;
+
+/* Login.css */
+
+.login-container {
+  width: 300px;
+  margin: 100px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+.login-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.login-container input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.login-container button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.login-container button:hover {
+  background-color: #0056b3;
+}
+
+
+
+
+
 st.download_button("⬇️ Download CSV", csv, "efficiency_data.csv", "text/csv")
 
 st.caption("Built with ❤️ using Streamlit")
+
 
