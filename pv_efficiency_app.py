@@ -1,88 +1,175 @@
-// src/components/HelloWorldComponent.js
-import React from 'react';
+// src/components/customers/CustomerList.js
+import React, { useState } from 'react';
 
-function HelloWorldComponent() {
-  return <p>Hello World Component</p>;
-}
-
-export default HelloWorldComponent;
-
-// src/components/HelloMessage.js
-import React from 'react';
-
-function HelloMessage({ name, message = "Hi, Hello" }) {
+function CustomerList({ customers, onSelectCustomer }) {
   return (
-    <p>
-      Message from {name}: {message}
-    </p>
+    <div>
+      <h2>Customer List</h2>
+      <table border="1">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          {customers.map((customer) => (
+            <tr
+              key={customer.id}
+              onClick={() => onSelectCustomer(customer)}
+              style={{ cursor: 'pointer' }}
+            >
+              <td>{customer.id}</td>
+              <td>{customer.firstName}</td>
+              <td>{customer.lastName}</td>
+              <td>{customer.email}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
-export default HelloMessage;
+export default CustomerList;
 
-// src/components/Counter.js
-import React, { useState, useEffect } from 'react';
+// src/components/customers/CustomerForm.js
+import React, { useState } from 'react';
 
-function Counter() {
-  const [timeElapsed, setTimeElapsed] = useState(0);
+function CustomerForm({ onSubmit }) {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+  });
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setTimeElapsed((prevTime) => prevTime + 1);
-    }, 1000);
-
-    // Cleanup function to clear the interval on unmount
-    return () => clearInterval(intervalId);
-  }, []);
-
-  return <p>Time Elapsed: {timeElapsed} seconds</p>;
-}
-
-export default Counter;
-
-// src/components/Alert.js
-import React from 'react';
-
-function Alert() {
-  const handleClick = () => {
-    alert("React is a great UI library");
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
-  return <button onClick={handleClick}>Click me Please</button>;
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(formData);
+    setFormData({
+      firstName: '',
+      lastName: '',
+      email: '',
+    });
+  };
+
+  return (
+    <div>
+      <h2>Add Customer</h2>
+      <form onSubmit={handleSubmit}>
+        <label>
+          First Name:
+          <input
+            type="text"
+            name="firstName"
+            value={formData.firstName}
+            onChange={handleChange}
+          />
+        </label>
+        <br />
+        <label>
+          Last Name:
+          <input
+            type="text"
+            name="lastName"
+            value={formData.lastName}
+            onChange={handleChange}
+          />
+        </label>
+        <br />
+        <label>
+          Email:
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+        </label>
+        <br />
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  );
 }
 
-export default Alert;
+export default CustomerForm;
+
+// src/components/customers/CustomerDetails.js
+import React from 'react';
+
+function CustomerDetails({ customer }) {
+  if (!customer) {
+    return <p>No customer selected.</p>;
+  }
+
+  return (
+    <div>
+      <h2>Customer Details</h2>
+      <p>ID: {customer.id}</p>
+      <p>First Name: {customer.firstName}</p>
+      <p>Last Name: {customer.lastName}</p>
+      <p>Email: {customer.email}</p>
+    </div>
+  );
+}
+
+export default CustomerDetails;
 
 // src/App.js
-import React from 'react';
-import HelloWorldComponent from './components/HelloWorldComponent';
-import HelloMessage from './components/HelloMessage';
-import Counter from './components/Counter';
-import Alert from './components/Alert';
+import React, { useState, useEffect } from 'react';
+import CustomerList from './components/customers/CustomerList';
+import CustomerForm from './components/customers/CustomerForm';
+import CustomerDetails from './components/customers/CustomerDetails';
 
 function App() {
+  const [customers, setCustomers] = useState([]);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+
+  useEffect(() => {
+    fetch('/customers.json')
+      .then((response) => response.json())
+      .then((data) => setCustomers(data))
+      .catch((error) => console.error('Error fetching customers:', error));
+  }, []);
+
+  const handleAddCustomer = (newCustomer) => {
+    const updatedCustomers = [...customers, { ...newCustomer, id: Date.now() }];
+    setCustomers(updatedCustomers);
+  };
+
+  const handleSelectCustomer = (customer) => {
+    setSelectedCustomer(customer);
+  };
+
   return (
     <div style={{ margin: '0 100px' }}>
-      <h3>UseCase 1 - Components, Props and States</h3>
-      <HelloWorldComponent />
-      <HelloMessage name="Euler" />
-      <HelloMessage name="Ramanujam" message="I got this in my dreams" />
-      <Counter />
-      <Alert />
+      <h1>Customer Management System</h1>
+
+      <CustomerList
+        customers={customers}
+        onSelectCustomer={handleSelectCustomer}
+      />
+
+      <div style={{ display: 'flex', gap: '20px' }}>
+        <CustomerForm onSubmit={handleAddCustomer} />
+        <CustomerDetails customer={selectedCustomer} />
+      </div>
     </div>
   );
 }
 
 export default App;
-
-
-
-
-
-
-
-
-
 
 
 
@@ -251,6 +338,7 @@ can preview files like Aadhaar and photographs side by side, streamlining the ve
 st.download_button("⬇️ Download CSV", csv, "efficiency_data.csv", "text/csv")
 
 st.caption("Built with ❤️ using Streamlit")
+
 
 
 
