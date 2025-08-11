@@ -1,3 +1,41 @@
+import { useEffect, useState } from "react";
+
+function CustomerList() {
+  const [customers, setCustomers] = useState([]);
+
+  useEffect(() => {
+    fetch("/customers.json")
+      .then((res) => res.json())
+      .then((data) => setCustomers(data))
+      .catch((err) => console.error("Error loading customers:", err));
+  }, []);
+
+  return (
+    <table border="1" cellPadding="8">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Email</th>
+        </tr>
+      </thead>
+      <tbody>
+        {customers.map((c) => (
+          <tr key={c.id}>
+            <td>{c.id}</td>
+            <td>{c.firstName}</td>
+            <td>{c.lastName}</td>
+            <td>{c.email}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+export default CustomerList;
+
 // src/components/customers/CustomerList.js
 import React, { useState } from 'react';
 
@@ -338,6 +376,7 @@ can preview files like Aadhaar and photographs side by side, streamlining the ve
 st.download_button("⬇️ Download CSV", csv, "efficiency_data.csv", "text/csv")
 
 st.caption("Built with ❤️ using Streamlit")
+
 
 
 
