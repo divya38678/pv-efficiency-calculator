@@ -140,7 +140,19 @@ export default Register;
 .login-container button:hover {
   background-color: #0056b3;
 }
+This is the Checkers page for User Story 4. 
+At the top, we’ve got a clean navigation bar with quick links, notifications,
+and messages so users can access everything without leaving the page. 
+The main section is focused on displaying checkers’ tasks and updates 
+in a clear, scrollable layout, with options to take action quickly. 
+The design keeps the workflow intuitive while making sure important 
+information is always visible
 
+This is the Checkers page for User Story 4, designed to let users 
+quickly review applicant details and verify documents. The top section
+is neatly organized into personal, employment, and loan details for quick
+reference. The right panel serves as a document viewer where checkers 
+can preview files like Aadhaar and photographs side by side, streamlining the verification process.
 
 
 
@@ -148,5 +160,6 @@ export default Register;
 st.download_button("⬇️ Download CSV", csv, "efficiency_data.csv", "text/csv")
 
 st.caption("Built with ❤️ using Streamlit")
+
 
 
