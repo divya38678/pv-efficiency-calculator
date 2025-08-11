@@ -2,6 +2,23 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
+<script>
+  let storedData = [];
+
+  document.getElementById("myForm").onsubmit = function (e) {
+    e.preventDefault();
+    const firstName = document.getElementById("firstName").value;
+    const lastName = document.getElementById("lastName").value;
+    storedData.push({ FirstName: firstName, LastName: lastName });
+    alert("Data saved locally!");
+    this.reset();
+  };
+
+  function displayData() {
+    document.getElementById("output").innerHTML =
+      '<pre>' + JSON.stringify(storedData, null, 2) + '</pre>';
+  }
+</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -234,6 +251,7 @@ can preview files like Aadhaar and photographs side by side, streamlining the ve
 st.download_button("⬇️ Download CSV", csv, "efficiency_data.csv", "text/csv")
 
 st.caption("Built with ❤️ using Streamlit")
+
 
 
 
