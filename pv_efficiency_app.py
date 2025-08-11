@@ -2,6 +2,17 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
+This is the Checkers page for User Story 4. At the top, we have a clean navigation
+bar with quick links, notifications, and messages, allowing users to access 
+everything without leaving the page. The main section displays the checker’s 
+tasks and updates in a clear, scrollable layout, with quick action options 
+to keep the workflow smooth. The top section is neatly organized into personal,
+employment, and loan details for easy reference. On the right, there’s a document
+viewer where checkers can preview Aadhaar, photographs, and other files side by side,
+making verification faster and more accurate. In this user story, the process is automated
+so that once the Maker submits a task, it’s instantly marked complete, the Checker step
+is created, and the task appears in the Checker’s queue for verification.
+
 # Set page config
 st.set_page_config(page_title="PV Efficiency Calculator", page_icon="☀️")
 
@@ -160,6 +171,7 @@ can preview files like Aadhaar and photographs side by side, streamlining the ve
 st.download_button("⬇️ Download CSV", csv, "efficiency_data.csv", "text/csv")
 
 st.caption("Built with ❤️ using Streamlit")
+
 
 
 
