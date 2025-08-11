@@ -1,3 +1,19 @@
+const handleAddCustomer = (newCustomer) => {
+  fetch('/customers', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(newCustomer)
+  })
+    .then((res) => res.json())
+    .then((createdCustomer) => {
+      setCustomers([...customers, createdCustomer]);
+    })
+    .catch((error) => console.error('Error adding customer:', error));
+};
+
+
+
+
 import { useEffect, useState } from "react";
 
 function CustomerList() {
@@ -376,6 +392,7 @@ can preview files like Aadhaar and photographs side by side, streamlining the ve
 st.download_button("⬇️ Download CSV", csv, "efficiency_data.csv", "text/csv")
 
 st.caption("Built with ❤️ using Streamlit")
+
 
 
 
