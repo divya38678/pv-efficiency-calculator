@@ -2,28 +2,79 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-function fibonacciSeries(n) {
-    let a = 0, b = 1;
-    console.log("Fibonacci Series:");
-    console.log(a);
-    console.log(b);
-    for (let i = 2; i < n; i++) {
-        let c = a + b;
-        console.log(c);
-        a = b;
-        b = c;
-    }
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JSON Form</title>
 
-function tableOf8() {
-    console.log("Multiplication Table of 8:");
-    for (let i = 1; i <= 10; i++) {
-        console.log(`${i} x 8 = ${i * 8}`);
-    }
-}
+  <!-- Load Bootstrap CSS from CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-fibonacciSeries(10);
-tableOf8();
+  <!-- Custom styles -->
+  <style>
+    body {
+      font-family: Arial;
+      margin: 40px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    #output pre {
+      background: #f0f0f0;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 class="text-center">Enter Your Details</h2>
+    <form id="myForm" class="row g-3">
+      <div class="col-md-6">
+        <label for="firstName" class="form-label">First Name:</label>
+        <input type="text" id="firstName" class="form-control" placeholder="Enter First Name" required />
+      </div>
+      <div class="col-md-6">
+        <label for="lastName" class="form-label">Last Name:</label>
+        <input type="text" id="lastName" class="form-control" placeholder="Enter Last Name" required />
+      </div>
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="button" class="btn btn-secondary" onclick="displayData()">Display JSON Data</button>
+      </div>
+    </form>
+
+    <div id="output" class="mt-4"></div>
+  </div>
+
+  <!-- JavaScript for handling form submission and displaying data -->
+  <script>
+    // Handle form submission
+    document.getElementById("myForm").onsubmit = async function (e) {
+      e.preventDefault();
+      const firstName = document.getElementById("firstName").value;
+      const lastName = document.getElementById("lastName").value;
+
+      const res = await fetch("/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ FirstName: firstName, LastName: lastName }),
+      });
+
+      alert(await res.text());
+      this.reset();
+    };
+
+    // Fetch and display JSON data
+    async function displayData() {
+      const res = await fetch("/data");
+      const json = await res.json();
+      document.getElementById("output").innerHTML = '<pre>' + JSON.stringify(json, null, 2) + '</pre>';
+    }
+  </script>
+</body>
+</html>
 
 # Set page config
 st.set_page_config(page_title="PV Efficiency Calculator", page_icon="☀️")
@@ -183,6 +234,7 @@ can preview files like Aadhaar and photographs side by side, streamlining the ve
 st.download_button("⬇️ Download CSV", csv, "efficiency_data.csv", "text/csv")
 
 st.caption("Built with ❤️ using Streamlit")
+
 
 
 
