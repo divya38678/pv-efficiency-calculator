@@ -1,217 +1,54 @@
-import React, { useState, useEffect } from 'react';
-import CustomerList from './components/CustomerList';
-import CustomerForm from './components/CustomerForm';
-import CustomerDetails from './components/CustomerDetails';
+app:::
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import CustomersList from './pages/CustomersList';
+import CustomerDetails from './pages/CustomerDetails';
+import CustomerForm from './pages/CustomerForm';
 
 function App() {
-  const [customers, setCustomers] = useState([]);
-  const [nextId, setNextId] = useState(1); // State to track the next ID
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
-
-  // Fetch initial customer data from customers.json
-  useEffect(() => {
-    fetch('/customers.json')
-      .then((response) => response.json())
-      .then((data) => {
-        setCustomers(data);
-
-        // Calculate the next available ID based on the fetched data
-        if (data.length > 0) {
-          const maxId = Math.max(...data.map((customer) => customer.id));
-          setNextId(maxId + 1);
-        }
-      })
-      .catch((error) => console.error('Error fetching customers:', error));
-  }, []);
-
-  // Handle adding a new customer
-  const handleAddCustomer = (newCustomerData) => {
-    // Create a new customer with the next sequential ID
-    const newCustomer = {
-      id: nextId,
-      ...newCustomerData
-    };
-
-    // Update the customers list with the new customer
-    setCustomers([...customers, newCustomer]);
-
-    // Increment the next ID for the next customer
-    setNextId(prevId => prevId + 1);
-
-    // Optionally, select the newly added customer
-    setSelectedCustomer(newCustomer);
-  };
-
-  // Handle selecting a customer
-  const handleSelectCustomer = (customer) => {
-    setSelectedCustomer(customer);
-  };
-
   return (
-    <div style={styles.container}>
-      <h1 style={styles.header}>Customer Management System</h1>
-
-      <div style={styles.grid}>
-        <CustomerList 
-          customers={customers} 
-          onSelectCustomer={handleSelectCustomer} 
-        />
-
-        <div style={styles.rightColumn}>
-          <CustomerForm onSubmit={handleAddCustomer} />
-          <CustomerDetails customer={selectedCustomer} />
-        </div>
+    <Router>
+      <div className="App">
+        <Navbar />
+        <Routes>
+          <Route path="/customers" element={<CustomersList />} />
+          <Route path="/customers/:id" element={<CustomerDetails />} />
+          <Route path="/add-customer" element={<CustomerForm />} />
+        </Routes>
       </div>
-    </div>
+    </Router>
   );
 }
-
-const styles = {
-  container: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '20px',
-    fontFamily: 'Arial, sans-serif',
-    backgroundColor: '#f5f7fa',
-    minHeight: '100vh'
-  },
-  header: {
-    textAlign: 'center',
-    color: '#2c3e50',
-    marginBottom: '30px',
-    fontSize: '2.2rem',
-    fontWeight: '600'
-  },
-  grid: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '30px'
-  },
-  rightColumn: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '30px'
-  }
-};
 
 export default App;
-const handleAddCustomer = (newCustomer) => {
-  fetch('/customers', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(newCustomer)
-  })
-    .then((res) => res.json())
-    .then((createdCustomer) => {
-      setCustomers([...customers, createdCustomer]);
-    })
-    .catch((error) => console.error('Error adding customer:', error));
-};
 
-
-
-
-import { useEffect, useState } from "react";
-
-function CustomerList() {
-  const [customers, setCustomers] = useState([]);
-
-  useEffect(() => {
-    fetch("/customers.json")
-      .then((res) => res.json())
-      .then((data) => setCustomers(data))
-      .catch((err) => console.error("Error loading customers:", err));
-  }, []);
-
-  return (
-    <table border="1" cellPadding="8">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>Email</th>
-        </tr>
-      </thead>
-      <tbody>
-        {customers.map((c) => (
-          <tr key={c.id}>
-            <td>{c.id}</td>
-            <td>{c.firstName}</td>
-            <td>{c.lastName}</td>
-            <td>{c.email}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-}
-
-export default CustomerList;
-
-// src/components/customers/CustomerList.js
+cf:
 import React, { useState } from 'react';
 
-function CustomerList({ customers, onSelectCustomer }) {
-  return (
-    <div>
-      <h2>Customer List</h2>
-      <table border="1">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Email</th>
-          </tr>
-        </thead>
-        <tbody>
-          {customers.map((customer) => (
-            <tr
-              key={customer.id}
-              onClick={() => onSelectCustomer(customer)}
-              style={{ cursor: 'pointer' }}
-            >
-              <td>{customer.id}</td>
-              <td>{customer.firstName}</td>
-              <td>{customer.lastName}</td>
-              <td>{customer.email}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-export default CustomerList;
-
-// src/components/customers/CustomerForm.js
-import React, { useState } from 'react';
-
-function CustomerForm({ onSubmit }) {
+const CustomerForm = () => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
+    phone: '',
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
-    setFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-    });
+    // Validate form data
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone) {
+      alert('All fields are required.');
+      return;
+    }
+    // Simulate form submission
+    console.log('Form submitted:', formData);
+    // Redirect to customer list page
+    window.location.href = '/customers';
   };
 
   return (
@@ -225,6 +62,7 @@ function CustomerForm({ onSubmit }) {
             name="firstName"
             value={formData.firstName}
             onChange={handleChange}
+            placeholder="Please enter first name"
           />
         </label>
         <br />
@@ -235,6 +73,7 @@ function CustomerForm({ onSubmit }) {
             name="lastName"
             value={formData.lastName}
             onChange={handleChange}
+            placeholder="Please enter last name"
           />
         </label>
         <br />
@@ -245,24 +84,46 @@ function CustomerForm({ onSubmit }) {
             name="email"
             value={formData.email}
             onChange={handleChange}
+            placeholder="Please enter email details"
           />
         </label>
         <br />
-        <button type="submit">Submit</button>
+        <label>
+          Phone:
+          <input
+            type="tel"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            placeholder="Please enter phone no"
+          />
+        </label>
+        <br />
+        <button type="submit">Create Customer</button>
       </form>
     </div>
   );
-}
+};
 
 export default CustomerForm;
 
-// src/components/customers/CustomerDetails.js
+cd::
 import React from 'react';
+import { useParams } from 'react-router-dom';
 
-function CustomerDetails({ customer }) {
-  if (!customer) {
-    return <p>No customer selected.</p>;
-  }
+const CustomerDetails = () => {
+  const { id } = useParams();
+  const customer = {
+    id: 1,
+    firstName: 'Sundar',
+    lastName: 'Pichai',
+    email: 'sundar.pichai@google.com',
+    phone: '1234567890',
+    accounts: [
+      { accountNo: '1001999', type: 'SAVINGS_ACCOUNT', branch: 'Bellandur', balance: 1000 },
+      { accountNo: '1001888', type: 'SAVINGS_ACCOUNT', branch: 'Indira Nagar', balance: 2000 },
+    ],
+  };
 
   return (
     <div>
@@ -271,58 +132,80 @@ function CustomerDetails({ customer }) {
       <p>First Name: {customer.firstName}</p>
       <p>Last Name: {customer.lastName}</p>
       <p>Email: {customer.email}</p>
+      <p>Phone: {customer.phone}</p>
+
+      <h3>List of Accounts</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Account No</th>
+            <th>Type</th>
+            <th>Branch</th>
+            <th>Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          {customer.accounts.map(account => (
+            <tr key={account.accountNo}>
+              <td>{account.accountNo}</td>
+              <td>{account.type}</td>
+              <td>{account.branch}</td>
+              <td>{account.balance}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
-}
+};
 
 export default CustomerDetails;
 
-// src/App.js
-import React, { useState, useEffect } from 'react';
-import CustomerList from './components/customers/CustomerList';
-import CustomerForm from './components/customers/CustomerForm';
-import CustomerDetails from './components/customers/CustomerDetails';
+cl:::
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-function App() {
-  const [customers, setCustomers] = useState([]);
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
-
-  useEffect(() => {
-    fetch('/customers.json')
-      .then((response) => response.json())
-      .then((data) => setCustomers(data))
-      .catch((error) => console.error('Error fetching customers:', error));
-  }, []);
-
-  const handleAddCustomer = (newCustomer) => {
-    const updatedCustomers = [...customers, { ...newCustomer, id: Date.now() }];
-    setCustomers(updatedCustomers);
-  };
-
-  const handleSelectCustomer = (customer) => {
-    setSelectedCustomer(customer);
-  };
+const CustomersList = () => {
+  const customers = [
+    { id: 1, firstName: 'Sundar', lastName: 'Pichai', email: 'sundar.pichai@google.com' },
+    { id: 2, firstName: 'Jeff', lastName: 'Bezos', email: 'jeff.bezos@amazon.com' },
+    // Add more customers as needed
+  ];
 
   return (
-    <div style={{ margin: '0 100px' }}>
-      <h1>Customer Management System</h1>
-
-      <CustomerList
-        customers={customers}
-        onSelectCustomer={handleSelectCustomer}
-      />
-
-      <div style={{ display: 'flex', gap: '20px' }}>
-        <CustomerForm onSubmit={handleAddCustomer} />
-        <CustomerDetails customer={selectedCustomer} />
-      </div>
+    <div>
+      <h2>Customers List</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {customers.map(customer => (
+            <tr key={customer.id}>
+              <td>{customer.id}</td>
+              <td>{customer.firstName}</td>
+              <td>{customer.lastName}</td>
+              <td>{customer.email}</td>
+              <td>
+                <Link to={`/customers/${customer.id}`}>Show</Link>
+                <button>Edit</button>
+                <button>Delete</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
-}
+};
 
-export default App;
-
-
+export default CustomersList;
 
 
 
@@ -489,6 +372,7 @@ can preview files like Aadhaar and photographs side by side, streamlining the ve
 st.download_button("⬇️ Download CSV", csv, "efficiency_data.csv", "text/csv")
 
 st.caption("Built with ❤️ using Streamlit")
+
 
 
 
