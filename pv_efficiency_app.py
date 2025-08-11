@@ -1,3 +1,100 @@
+import React, { useState, useEffect } from 'react';
+import CustomerList from './components/CustomerList';
+import CustomerForm from './components/CustomerForm';
+import CustomerDetails from './components/CustomerDetails';
+
+function App() {
+  const [customers, setCustomers] = useState([]);
+  const [nextId, setNextId] = useState(1); // State to track the next ID
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+
+  // Fetch initial customer data from customers.json
+  useEffect(() => {
+    fetch('/customers.json')
+      .then((response) => response.json())
+      .then((data) => {
+        setCustomers(data);
+
+        // Calculate the next available ID based on the fetched data
+        if (data.length > 0) {
+          const maxId = Math.max(...data.map((customer) => customer.id));
+          setNextId(maxId + 1);
+        }
+      })
+      .catch((error) => console.error('Error fetching customers:', error));
+  }, []);
+
+  // Handle adding a new customer
+  const handleAddCustomer = (newCustomerData) => {
+    // Create a new customer with the next sequential ID
+    const newCustomer = {
+      id: nextId,
+      ...newCustomerData
+    };
+
+    // Update the customers list with the new customer
+    setCustomers([...customers, newCustomer]);
+
+    // Increment the next ID for the next customer
+    setNextId(prevId => prevId + 1);
+
+    // Optionally, select the newly added customer
+    setSelectedCustomer(newCustomer);
+  };
+
+  // Handle selecting a customer
+  const handleSelectCustomer = (customer) => {
+    setSelectedCustomer(customer);
+  };
+
+  return (
+    <div style={styles.container}>
+      <h1 style={styles.header}>Customer Management System</h1>
+
+      <div style={styles.grid}>
+        <CustomerList 
+          customers={customers} 
+          onSelectCustomer={handleSelectCustomer} 
+        />
+
+        <div style={styles.rightColumn}>
+          <CustomerForm onSubmit={handleAddCustomer} />
+          <CustomerDetails customer={selectedCustomer} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const styles = {
+  container: {
+    maxWidth: '1200px',
+    margin: '0 auto',
+    padding: '20px',
+    fontFamily: 'Arial, sans-serif',
+    backgroundColor: '#f5f7fa',
+    minHeight: '100vh'
+  },
+  header: {
+    textAlign: 'center',
+    color: '#2c3e50',
+    marginBottom: '30px',
+    fontSize: '2.2rem',
+    fontWeight: '600'
+  },
+  grid: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '30px'
+  },
+  rightColumn: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '30px'
+  }
+};
+
+export default App;
 const handleAddCustomer = (newCustomer) => {
   fetch('/customers', {
     method: 'POST',
@@ -392,6 +489,7 @@ can preview files like Aadhaar and photographs side by side, streamlining the ve
 st.download_button("⬇️ Download CSV", csv, "efficiency_data.csv", "text/csv")
 
 st.caption("Built with ❤️ using Streamlit")
+
 
 
 
