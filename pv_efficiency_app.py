@@ -1,3 +1,670 @@
+Dashboard::::::::
+"use client"
+
+import { Button } from "../../components/ui/button"
+
+export default function Dashboard({ onGoToQueue, onGoToFinished }) {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
+        <div className="flex items-center justify-center">
+          <div className="flex items-center space-x-12">
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+              <span className="text-white font-bold text-sm">OPS</span>
+            </div>
+            <nav className="flex space-x-12">
+              <span className="text-blue-600 font-semibold border-b-2 border-blue-600 pb-1">DASHBOARD</span>
+              <button onClick={onGoToQueue} className="text-gray-700 font-medium hover:text-blue-600 transition-colors">
+                WORK QUEUE
+              </button>
+              <button
+                onClick={onGoToFinished}
+                className="text-gray-700 font-medium hover:text-blue-600 transition-colors"
+              >
+                FINISHED TASKS
+              </button>
+              <span className="text-gray-700 font-medium hover:text-blue-600 cursor-pointer transition-colors">
+                REPORTS
+              </span>
+              <span className="text-gray-700 font-medium hover:text-blue-600 cursor-pointer transition-colors">
+                HELP
+              </span>
+              <span className="text-gray-700 font-medium hover:text-blue-600 cursor-pointer transition-colors">
+                NOTIFICATIONS
+              </span>
+            </nav>
+            <div className="w-8 h-8 bg-gradient-to-r from-orange-400 to-orange-500 rounded-full flex items-center justify-center">
+              <span className="text-white font-bold text-xs">JD</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="p-8">
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-3xl font-bold text-center mb-12 text-gray-800">Operations Dashboard</h1>
+
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
+              <h3 className="text-lg font-semibold text-gray-700 mb-2">Pending Tasks</h3>
+              <p className="text-3xl font-bold text-blue-600">12</p>
+            </div>
+            <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-orange-500">
+              <h3 className="text-lg font-semibold text-gray-700 mb-2">In Progress</h3>
+              <p className="text-3xl font-bold text-orange-600">5</p>
+            </div>
+            <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500">
+              <h3 className="text-lg font-semibold text-gray-700 mb-2">Completed Today</h3>
+              <p className="text-3xl font-bold text-green-600">8</p>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="bg-white rounded-xl shadow-lg p-8">
+            <h2 className="text-xl font-semibold text-gray-800 mb-6">Quick Actions</h2>
+            <div className="flex flex-wrap gap-4">
+              <Button
+                onClick={onGoToQueue}
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-lg font-medium"
+              >
+                View Work Queue
+              </Button>
+              <Button
+                onClick={onGoToFinished}
+                className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-lg font-medium"
+              >
+                View Finished Tasks
+              </Button>
+              <Button className="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white px-6 py-3 rounded-lg font-medium">
+                Generate Report
+              </Button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  )
+}
+
+FinishedTasks::::::::
+"use client"
+
+import { Button } from "../../components/ui/button"
+
+export default function FinishedTasks({ onGoToDashboard, onGoToQueue }) {
+  const finishedTasks = [
+    {
+      workId: "WRK001",
+      submittedBy: "John Doe",
+      submissionDate: "2024-01-15",
+      completedDate: "2024-01-16",
+      status: "Approved",
+      checkedBy: "Jane Checker",
+    },
+    {
+      workId: "WRK002",
+      submittedBy: "Alice Smith",
+      submissionDate: "2024-01-14",
+      completedDate: "2024-01-15",
+      status: "Rejected",
+      checkedBy: "Mike Checker",
+    },
+    {
+      workId: "WRK003",
+      submittedBy: "Bob Johnson",
+      submissionDate: "2024-01-13",
+      completedDate: "2024-01-14",
+      status: "Approved",
+      checkedBy: "Sarah Checker",
+    },
+  ]
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
+        <div className="flex items-center justify-center">
+          <div className="flex items-center space-x-12">
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+              <span className="text-white font-bold text-sm">OPS</span>
+            </div>
+            <nav className="flex space-x-12">
+              <button
+                onClick={onGoToDashboard}
+                className="text-gray-700 font-medium hover:text-blue-600 transition-colors"
+              >
+                DASHBOARD
+              </button>
+              <button onClick={onGoToQueue} className="text-gray-700 font-medium hover:text-blue-600 transition-colors">
+                WORK QUEUE
+              </button>
+              <span className="text-blue-600 font-semibold border-b-2 border-blue-600 pb-1">FINISHED TASKS</span>
+              <span className="text-gray-700 font-medium hover:text-blue-600 cursor-pointer transition-colors">
+                REPORTS
+              </span>
+              <span className="text-gray-700 font-medium hover:text-blue-600 cursor-pointer transition-colors">
+                HELP
+              </span>
+              <span className="text-gray-700 font-medium hover:text-blue-600 cursor-pointer transition-colors">
+                NOTIFICATIONS
+              </span>
+            </nav>
+            <div className="w-8 h-8 bg-gradient-to-r from-orange-400 to-orange-500 rounded-full flex items-center justify-center">
+              <span className="text-white font-bold text-xs">JD</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Sidebar */}
+      <div className="flex">
+        <aside className="w-16 bg-gradient-to-b from-blue-100 to-orange-100 min-h-screen flex flex-col items-center py-6 space-y-6">
+          <div className="w-6 h-6 border-2 border-blue-500 rounded bg-blue-50"></div>
+          <div className="w-6 h-6 flex items-center justify-center">
+            <div className="w-4 h-0.5 bg-orange-500"></div>
+            <div className="w-0.5 h-4 bg-orange-500 absolute"></div>
+          </div>
+        </aside>
+
+        {/* Main Content */}
+        <main className="flex-1 p-8">
+          <div className="max-w-6xl mx-auto">
+            <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">FINISHED TASKS</h1>
+
+            {/* Tasks Table */}
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+              <div className="bg-gradient-to-r from-green-500 to-green-600 px-6 py-4">
+                <div className="grid grid-cols-7 gap-4 font-semibold text-white">
+                  <div>WORK ID</div>
+                  <div>SUBMITTED BY</div>
+                  <div>SUBMISSION DATE</div>
+                  <div>COMPLETED DATE</div>
+                  <div>STATUS</div>
+                  <div>CHECKED BY</div>
+                  <div>ACTION</div>
+                </div>
+              </div>
+
+              <div className="divide-y divide-gray-200">
+                {finishedTasks.map((task, index) => (
+                  <div
+                    key={task.workId}
+                    className={`px-6 py-4 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-green-50 transition-colors`}
+                  >
+                    <div className="grid grid-cols-7 gap-4 items-center">
+                      <div className="text-gray-800 font-medium">{task.workId}</div>
+                      <div className="text-gray-700">{task.submittedBy}</div>
+                      <div className="text-gray-700">{task.submissionDate}</div>
+                      <div className="text-gray-700">{task.completedDate}</div>
+                      <div>
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            task.status === "Approved" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                          }`}
+                        >
+                          {task.status}
+                        </span>
+                      </div>
+                      <div className="text-gray-700">{task.checkedBy}</div>
+                      <div>
+                        <Button className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-lg font-medium text-sm">
+                          VIEW DETAILS
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Summary Stats */}
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500">
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Approved</h3>
+                <p className="text-3xl font-bold text-green-600">2</p>
+              </div>
+              <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-red-500">
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Rejected</h3>
+                <p className="text-3xl font-bold text-red-600">1</p>
+              </div>
+              <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Processed</h3>
+                <p className="text-3xl font-bold text-blue-600">3</p>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  )
+                             }
+                             WorkItemDetails:::::
+                             "use client"
+
+import { Button } from "../../components/ui/button"
+
+export default function FinishedTasks({ onGoToDashboard, onGoToQueue }) {
+  const finishedTasks = [
+    {
+      workId: "WRK001",
+      submittedBy: "John Doe",
+      submissionDate: "2024-01-15",
+      completedDate: "2024-01-16",
+      status: "Approved",
+      checkedBy: "Jane Checker",
+    },
+    {
+      workId: "WRK002",
+      submittedBy: "Alice Smith",
+      submissionDate: "2024-01-14",
+      completedDate: "2024-01-15",
+      status: "Rejected",
+      checkedBy: "Mike Checker",
+    },
+    {
+      workId: "WRK003",
+      submittedBy: "Bob Johnson",
+      submissionDate: "2024-01-13",
+      completedDate: "2024-01-14",
+      status: "Approved",
+      checkedBy: "Sarah Checker",
+    },
+  ]
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
+        <div className="flex items-center justify-center">
+          <div className="flex items-center space-x-12">
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+              <span className="text-white font-bold text-sm">OPS</span>
+            </div>
+            <nav className="flex space-x-12">
+              <button
+                onClick={onGoToDashboard}
+                className="text-gray-700 font-medium hover:text-blue-600 transition-colors"
+              >
+                DASHBOARD
+              </button>
+              <button onClick={onGoToQueue} className="text-gray-700 font-medium hover:text-blue-600 transition-colors">
+                WORK QUEUE
+              </button>
+              <span className="text-blue-600 font-semibold border-b-2 border-blue-600 pb-1">FINISHED TASKS</span>
+              <span className="text-gray-700 font-medium hover:text-blue-600 cursor-pointer transition-colors">
+                REPORTS
+              </span>
+              <span className="text-gray-700 font-medium hover:text-blue-600 cursor-pointer transition-colors">
+                HELP
+              </span>
+              <span className="text-gray-700 font-medium hover:text-blue-600 cursor-pointer transition-colors">
+                NOTIFICATIONS
+              </span>
+            </nav>
+            <div className="w-8 h-8 bg-gradient-to-r from-orange-400 to-orange-500 rounded-full flex items-center justify-center">
+              <span className="text-white font-bold text-xs">JD</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Sidebar */}
+      <div className="flex">
+        <aside className="w-16 bg-gradient-to-b from-blue-100 to-orange-100 min-h-screen flex flex-col items-center py-6 space-y-6">
+          <div className="w-6 h-6 border-2 border-blue-500 rounded bg-blue-50"></div>
+          <div className="w-6 h-6 flex items-center justify-center">
+            <div className="w-4 h-0.5 bg-orange-500"></div>
+            <div className="w-0.5 h-4 bg-orange-500 absolute"></div>
+          </div>
+        </aside>
+
+        {/* Main Content */}
+        <main className="flex-1 p-8">
+          <div className="max-w-6xl mx-auto">
+            <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">FINISHED TASKS</h1>
+
+            {/* Tasks Table */}
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+              <div className="bg-gradient-to-r from-green-500 to-green-600 px-6 py-4">
+                <div className="grid grid-cols-7 gap-4 font-semibold text-white">
+                  <div>WORK ID</div>
+                  <div>SUBMITTED BY</div>
+                  <div>SUBMISSION DATE</div>
+                  <div>COMPLETED DATE</div>
+                  <div>STATUS</div>
+                  <div>CHECKED BY</div>
+                  <div>ACTION</div>
+                </div>
+              </div>
+
+              <div className="divide-y divide-gray-200">
+                {finishedTasks.map((task, index) => (
+                  <div
+                    key={task.workId}
+                    className={`px-6 py-4 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-green-50 transition-colors`}
+                  >
+                    <div className="grid grid-cols-7 gap-4 items-center">
+                      <div className="text-gray-800 font-medium">{task.workId}</div>
+                      <div className="text-gray-700">{task.submittedBy}</div>
+                      <div className="text-gray-700">{task.submissionDate}</div>
+                      <div className="text-gray-700">{task.completedDate}</div>
+                      <div>
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            task.status === "Approved" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                          }`}
+                        >
+                          {task.status}
+                        </span>
+                      </div>
+                      <div className="text-gray-700">{task.checkedBy}</div>
+                      <div>
+                        <Button className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-lg font-medium text-sm">
+                          VIEW DETAILS
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Summary Stats */}
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500">
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Approved</h3>
+                <p className="text-3xl font-bold text-green-600">2</p>
+              </div>
+              <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-red-500">
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Rejected</h3>
+                <p className="text-3xl font-bold text-red-600">1</p>
+              </div>
+              <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Processed</h3>
+                <p className="text-3xl font-bold text-blue-600">3</p>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  )
+}
+
+                WorkQueue:::::
+                            "use client"
+
+import { Button } from "../../components/ui/button"
+import { useState } from "react"
+
+export default function WorkQueue({ onViewDetails, onGoToDashboard, onGoToFinished }) {
+  const [workIdFilter, setWorkIdFilter] = useState("")
+  const [nameFilter, setNameFilter] = useState("")
+  const [dateFilter, setDateFilter] = useState("")
+
+  const mockTasks = [
+    {
+      workId: "WRK001",
+      submittedBy: "John Doe",
+      submissionDate: "2024-01-15",
+      status: "Pending Review",
+    },
+    {
+      workId: "WRK002",
+      submittedBy: "Jane Smith",
+      submissionDate: "2024-01-16",
+      status: "In Progress",
+    },
+    {
+      workId: "WRK003",
+      submittedBy: "Mike Johnson",
+      submissionDate: "2024-01-17",
+      status: "Pending Review",
+    },
+  ]
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
+        <div className="flex items-center justify-center">
+          <div className="flex items-center space-x-12">
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+              <span className="text-white font-bold text-sm">OPS</span>
+            </div>
+            <nav className="flex space-x-12">
+              <button
+                onClick={onGoToDashboard}
+                className="text-gray-700 font-medium hover:text-blue-600 transition-colors"
+              >
+                DASHBOARD
+              </button>
+              <span className="text-blue-600 font-semibold border-b-2 border-blue-600 pb-1">WORK QUEUE</span>
+              <button
+                onClick={onGoToFinished}
+                className="text-gray-700 font-medium hover:text-blue-600 cursor-pointer transition-colors"
+              >
+                FINISHED TASKS
+              </button>
+              <span className="text-gray-700 font-medium hover:text-blue-600 cursor-pointer transition-colors">
+                REPORTS
+              </span>
+              <span className="text-gray-700 font-medium hover:text-blue-600 cursor-pointer transition-colors">
+                HELP
+              </span>
+              <span className="text-gray-700 font-medium hover:text-blue-600 cursor-pointer transition-colors">
+                NOTIFICATIONS
+              </span>
+            </nav>
+            <div className="w-8 h-8 bg-gradient-to-r from-orange-400 to-orange-500 rounded-full flex items-center justify-center">
+              <span className="text-white font-bold text-xs">JD</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Sidebar */}
+      <div className="flex">
+        <aside className="w-16 bg-gradient-to-b from-blue-100 to-orange-100 min-h-screen flex flex-col items-center py-6 space-y-6">
+          <div className="w-6 h-6 border-2 border-blue-500 rounded bg-blue-50"></div>
+          <div className="w-6 h-6 flex items-center justify-center">
+            <div className="w-4 h-0.5 bg-orange-500"></div>
+            <div className="w-0.5 h-4 bg-orange-500 absolute"></div>
+          </div>
+        </aside>
+
+        {/* Main Content */}
+        <main className="flex-1 p-8">
+          <div className="max-w-6xl mx-auto">
+            <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">ASSIGNED TASKS</h1>
+
+            {/* Tasks Table */}
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden mb-8">
+              <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
+                <div className="grid grid-cols-6 gap-4 font-semibold text-white">
+                  <div>WORK ID</div>
+                  <div>SUBMITTED BY</div>
+                  <div>SUBMISSION DATE</div>
+                  <div>STATUS</div>
+                  <div>ACTION</div>
+                  <div></div>
+                </div>
+              </div>
+
+              <div className="divide-y divide-gray-200">
+                {mockTasks.map((task, index) => (
+                  <div
+                    key={task.workId}
+                    className={`px-6 py-4 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-blue-50 transition-colors`}
+                  >
+                    <div className="grid grid-cols-6 gap-4 items-center">
+                      <div className="text-gray-800 font-medium">{task.workId}</div>
+                      <div className="text-gray-700">{task.submittedBy}</div>
+                      <div className="text-gray-700">{task.submissionDate}</div>
+                      <div>
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            task.status === "Pending Review"
+                              ? "bg-orange-100 text-orange-800"
+                              : "bg-blue-100 text-blue-800"
+                          }`}
+                        >
+                          {task.status}
+                        </span>
+                      </div>
+                      <div>
+                        <Button
+                          onClick={() => onViewDetails(task.workId)}
+                          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-2 rounded-lg font-medium"
+                        >
+                          VIEW
+                        </Button>
+                      </div>
+                      <div></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Filter Section */}
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">FILTER BY:</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Work ID</label>
+                  <input
+                    type="text"
+                    value={workIdFilter}
+                    onChange={(e) => setWorkIdFilter(e.target.value)}
+                    placeholder="Enter Work ID"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                  <input
+                    type="text"
+                    value={nameFilter}
+                    onChange={(e) => setNameFilter(e.target.value)}
+                    placeholder="Enter Name"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                  <input
+                    type="date"
+                    value={dateFilter}
+                    onChange={(e) => setDateFilter(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+              </div>
+              <div className="mt-4 flex gap-3">
+                <Button className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg">
+                  Apply Filters
+                </Button>
+                <Button
+                  onClick={() => {
+                    setWorkIdFilter("")
+                    setNameFilter("")
+                    setDateFilter("")
+                  }}
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg"
+                >
+                  Clear
+                </Button>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  )
+}
+
+                           app.js:::::::
+                           "use client"
+
+import { useState } from "react"
+import Dashboard from "./components/Dashboard"
+import WorkQueue from "./components/WorkQueue"
+import WorkItemDetails from "./components/WorkItemDetails"
+import FinishedTasks from "./components/FinishedTasks"
+
+function App() {
+  const [currentView, setCurrentView] = useState("dashboard")
+  const [selectedWorkItem, setSelectedWorkItem] = useState(null)
+
+  const handleGoToDashboard = () => setCurrentView("dashboard")
+  const handleGoToQueue = () => setCurrentView("workQueue")
+  const handleGoToFinished = () => setCurrentView("finishedTasks")
+
+  const handleViewDetails = (workId) => {
+    setSelectedWorkItem(workId)
+    setCurrentView("workItemDetails")
+  }
+
+  const handleApprove = () => {
+    setCurrentView("finishedTasks")
+  }
+
+  const renderCurrentView = () => {
+    switch (currentView) {
+      case "dashboard":
+        return <Dashboard onGoToQueue={handleGoToQueue} onGoToFinished={handleGoToFinished} />
+      case "workQueue":
+        return (
+          <WorkQueue
+            onViewDetails={handleViewDetails}
+            onGoToDashboard={handleGoToDashboard}
+            onGoToFinished={handleGoToFinished}
+          />
+        )
+      case "workItemDetails":
+        return (
+          <WorkItemDetails
+            workId={selectedWorkItem}
+            onBackToQueue={handleGoToQueue}
+            onGoToDashboard={handleGoToDashboard}
+            onGoToFinished={handleGoToFinished}
+            onApprove={handleApprove}
+          />
+        )
+      case "finishedTasks":
+        return <FinishedTasks onGoToDashboard={handleGoToDashboard} onGoToQueue={handleGoToQueue} />
+      default:
+        return <Dashboard onGoToQueue={handleGoToQueue} onGoToFinished={handleGoToFinished} />
+    }
+  }
+
+  return <div className="min-h-screen bg-gray-50">{renderCurrentView()}</div>
+}
+
+export default App
+
+                             
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 app:::
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
@@ -372,6 +1039,7 @@ can preview files like Aadhaar and photographs side by side, streamlining the ve
 st.download_button("⬇️ Download CSV", csv, "efficiency_data.csv", "text/csv")
 
 st.caption("Built with ❤️ using Streamlit")
+
 
 
 
