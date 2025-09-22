@@ -1,3 +1,169 @@
+render() {
+    return html`
+      <h2 style="text-align: center;">Add New Customer</h2>
+      <form id="myForm" @submit="${this.handleClick}">
+        <div style="padding: 10px 50px;">
+
+          <!-- First & Last Name -->
+          <sc-input-group label="Name" label-size="" tooltip="" tooltip-placement="top" hint="" hint-placement="right">
+            <sc-text-input
+              label="First name"
+              placeholder="First name here"
+              name="firstName"
+              @input="${this.handleChange}"
+              value="${this.formData.firstName}"
+            ></sc-text-input>
+            ${this.errors.firstName ? html`<div class="error">${this.errors.firstName}</div>` : ''}
+
+            <sc-text-input
+              label="Last name"
+              placeholder="Last name here"
+              name="lastName"
+              @input="${this.handleChange}"
+              value="${this.formData.lastName}"
+            ></sc-text-input>
+            ${this.errors.lastName ? html`<div class="error">${this.errors.lastName}</div>` : ''}
+          </sc-input-group>
+
+          <!-- Phone -->
+          <sc-text-input
+            label="Phone number"
+            placeholder="Phone number here"
+            name="phone"
+            @input="${this.handleChange}"
+            value="${this.formData.phone}"
+          ></sc-text-input>
+          ${this.errors.phone ? html`<div class="error">${this.errors.phone}</div>` : ''}
+
+          <!-- Email -->
+          <sc-text-input
+            label="Email ID"
+            placeholder="Email ID here"
+            name="email"
+            @input="${this.handleChange}"
+            value="${this.formData.email}"
+          ></sc-text-input>
+          ${this.errors.email ? html`<div class="error">${this.errors.email}</div>` : ''}
+
+          <!-- DOB -->
+          <sc-icon-provider>
+            <sc-date-input
+              label="DOB"
+              name="dob"
+              @input="${this.handleChange}"
+              value="${this.formData.dob}"
+            ></sc-date-input>
+          </sc-icon-provider>
+          ${this.errors.dob ? html`<div class="error">${this.errors.dob}</div>` : ''}
+
+          <!-- Gender -->
+          <sc-dropdown-input
+            size="md"
+            label="Gender"
+            name="gender"
+            @input="${this.handleChange}"
+            value="${this.formData.gender}"
+          >
+            <sc-dropdown-option value="Male">Male</sc-dropdown-option>
+            <sc-dropdown-option value="Female">Female</sc-dropdown-option>
+            <sc-dropdown-option value="others">Others</sc-dropdown-option>
+          </sc-dropdown-input>
+
+          <!-- Address -->
+          <sc-text-input
+            multiline=""
+            label="Residential Address"
+            placeholder="Address here"
+            name="address"
+            @input="${this.handleChange}"
+            value="${this.formData.address}"
+          ></sc-text-input>
+
+          <!-- Pincode -->
+          <sc-text-input
+            label="Pincode"
+            placeholder="Pincode here"
+            name="pincode"
+            @input="${this.handleChange}"
+            value="${this.formData.pincode}"
+          ></sc-text-input>
+          ${this.errors.pincode ? html`<div class="error">${this.errors.pincode}</div>` : ''}
+
+          <br>
+
+          <!-- Buttons -->
+          <sc-button type="primary" @click="${this.resetForm}" state="default" size="sm">RESET</sc-button>
+
+          <sc-button-group size="md" @sc-select="${this.handleClick}">
+            <sc-button-group-item value="1">Submit</sc-button-group-item>
+          </sc-button-group>
+
+          <!-- Loading State -->
+          ${this.submitting ? html`
+            <div style="color: #1976d2; margin-top: 16px; font-weight: 500;">
+               Submitting...
+            </div>
+          ` : ''}
+
+          <!-- Success Message -->
+          ${this.submitSuccess ? html`
+            <div style="color: green; margin-top: 16px; font-weight: bold;">
+               Customer added successfully!
+            </div>
+          ` : ''}
+
+        </div>
+      </form>
+    `;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Dashboard::::::::
 "use client"
 
@@ -1039,6 +1205,7 @@ can preview files like Aadhaar and photographs side by side, streamlining the ve
 st.download_button("⬇️ Download CSV", csv, "efficiency_data.csv", "text/csv")
 
 st.caption("Built with ❤️ using Streamlit")
+
 
 
 
