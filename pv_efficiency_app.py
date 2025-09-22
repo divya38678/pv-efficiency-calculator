@@ -1,3 +1,300 @@
+import { html, LitElement, css } from 'lit';
+
+export class CustomerForm extends LitElement {
+  static styles = css`
+    :host {
+      display: flex;
+      justify-content: center;
+    }
+    form {
+      max-width: 600px;
+      padding: 24px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border: 1px solid #eee;
+      font-family: Arial, sans-serif;
+    }
+    .error {
+      color: #d32f2f;
+      font-size: 0.85em;
+      margin-top: 4px;
+      padding-left: 2px;
+    }
+    sc-button {
+      margin-top: 16px;
+      font-weight: 500;
+    }
+    h2 {
+      margin-bottom: 24px;
+    }
+  `;
+
+  static properties = {
+    formData: { type: Object },
+    errors: { type: Object },
+    submitting: { type: Boolean },
+    submitSuccess: { type: Boolean }
+  };
+
+  constructor() {
+    super();
+    this.formData = {
+      firstName: "",
+      lastName: "",
+      phone: "",
+      email: "",
+      dob: "",
+      gender: "",
+      address: "",
+      pincode: ""
+    };
+    this.errors = {};
+    this.submitting = false;
+    this.submitSuccess = false;
+  }
+
+  handleChange(e) {
+    const target = e.target;
+    const name = target.getAttribute("name");
+    let value = e.detail?.value ?? target.value;
+
+    if (!name) return;
+
+    this.formData = {
+      ...this.formData,
+      [name]: value,
+    };
+
+    this.validateField(name, value);
+  }
+
+  validateField(field, value) {
+    let error = "";
+
+    switch (field) {
+      case "firstName":
+      case "lastName":
+        if (!value || value.trim().length < 2) {
+          error = "Name must be at least 2 characters long";
+        }
+        break;
+      case "email":
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+          error = "Enter a valid email address";
+        }
+        break;
+      case "phone":
+        if (!/^\d{10}$/.test(value)) {
+          error = "Phone number must be 10 digits";
+        }
+        break;
+      case "dob":
+        const today = new Date();
+        const dobDate = new Date(value);
+        if (!value || dobDate >= today) {
+          error = "Date of Birth must be before today";
+        }
+        break;
+      case "pincode":
+        if (!/^\d{6}$/.test(value)) {
+          error = "Pincode must be 6 digits";
+        }
+        break;
+    }
+
+    this.errors = {
+      ...this.errors,
+      [field]: error
+    };
+  }
+
+  validateForm() {
+    Object.keys(this.formData).forEach((key) => {
+      this.validateField(key, this.formData[key]);
+    });
+    return Object.values(this.errors).every((err) => !err);
+  }
+
+  async handleClick(e) {
+    e.preventDefault();
+
+    if (!this.validateForm()) {
+      window.alert("Please fix validation errors first.");
+      return;
+    }
+
+    this.submitting = true;
+    this.submitSuccess = false;
+
+    try {
+      const response = await fetch("http://localhost:9090/api/customers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(this.formData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("Success:", data);
+      this.submitSuccess = true;
+      this.resetForm();
+
+      // Optional: Refresh customer list in parent component
+      // const customerList = this.closest('customer-list');
+      // if (customerList && typeof customerList.fetchCustomers === 'function') {
+      //   customerList.fetchCustomers();
+      // }
+
+    } catch (err) {
+      console.error("Error:", err);
+      window.alert("Submission failed. Please try again.");
+    } finally {
+      this.submitting = false;
+    }
+  }
+
+  resetForm() {
+    this.formData = {
+      firstName: "",
+      lastName: "",
+      phone: "",
+      email: "",
+      dob: "",
+      gender: "",
+      address: "",
+      pincode: ""
+    };
+    this.errors = {};
+    this.submitSuccess = false;
+  }
+
+  render() {
+    return html`
+      <h2 style="text-align: center;">Add New Customer</h2>
+      <form id="myForm" @submit="${this.handleClick}">
+        <div style="padding: 10px 50px;">
+
+          <!-- First & Last Name -->
+          <sc-input-group label="Name" label-size="" tooltip="" tooltip-placement="top" hint="" hint-placement="right">
+            <sc-text-input
+              label="First name"
+              placeholder="First name here"
+              name="firstName"
+              @input="${this.handleChange}"
+              value="${this.formData.firstName}"
+            ></sc-text-input>
+            ${this.errors.firstName ? html`<div class="error">${this.errors.firstName}</div>` : ''}
+
+            <sc-text-input
+              label="Last name"
+              placeholder="Last name here"
+              name="lastName"
+              @input="${this.handleChange}"
+              value="${this.formData.lastName}"
+            ></sc-text-input>
+            ${this.errors.lastName ? html`<div class="error">${this.errors.lastName}</div>` : ''}
+          </sc-input-group>
+
+          <!-- Phone -->
+          <sc-text-input
+            label="Phone number"
+            placeholder="Phone number here"
+            name="phone"
+            @input="${this.handleChange}"
+            value="${this.formData.phone}"
+          ></sc-text-input>
+          ${this.errors.phone ? html`<div class="error">${this.errors.phone}</div>` : ''}
+
+          <!-- Email -->
+          <sc-text-input
+            label="Email ID"
+            placeholder="Email ID here"
+            name="email"
+            @input="${this.handleChange}"
+            value="${this.formData.email}"
+          ></sc-text-input>
+          ${this.errors.email ? html`<div class="error">${this.errors.email}</div>` : ''}
+
+          <!-- DOB -->
+          <sc-icon-provider>
+            <sc-date-input
+              label="DOB"
+              name="dob"
+              @input="${this.handleChange}"
+              value="${this.formData.dob}"
+            ></sc-date-input>
+          </sc-icon-provider>
+          ${this.errors.dob ? html`<div class="error">${this.errors.dob}</div>` : ''}
+
+          <!-- Gender -->
+          <sc-dropdown-input
+            size="md"
+            label="Gender"
+            name="gender"
+            @input="${this.handleChange}"
+            value="${this.formData.gender}"
+          >
+            <sc-dropdown-option value="Male">Male</sc-dropdown-option>
+            <sc-dropdown-option value="Female">Female</sc-dropdown-option>
+            <sc-dropdown-option value="others">Others</sc-dropdown-option>
+          </sc-dropdown-input>
+
+          <!-- Address -->
+          <sc-text-input
+            multiline=""
+            label="Residential Address"
+            placeholder="Address here"
+            name="address"
+            @input="${this.handleChange}"
+            value="${this.formData.address}"
+          ></sc-text-input>
+
+          <!-- Pincode -->
+          <sc-text-input
+            label="Pincode"
+            placeholder="Pincode here"
+            name="pincode"
+            @input="${this.handleChange}"
+            value="${this.formData.pincode}"
+          ></sc-text-input>
+          ${this.errors.pincode ? html`<div class="error">${this.errors.pincode}</div>` : ''}
+
+          <br>
+
+          <!-- Buttons -->
+          <sc-button type="primary" @click="${this.resetForm}" state="default" size="sm">RESET</sc-button>
+
+          <sc-button-group size="md" @sc-select="${this.handleClick}">
+            <sc-button-group-item value="1">Submit</sc-button-group-item>
+          </sc-button-group>
+
+          <!-- Loading State -->
+          ${this.submitting ? html`
+            <div style="color: #1976d2; margin-top: 16px; font-weight: 500;">
+              🔄 Submitting...
+            </div>
+          ` : ''}
+
+          <!-- Success Message -->
+          ${this.submitSuccess ? html`
+            <div style="color: green; margin-top: 16px; font-weight: bold;">
+              ✅ Customer added successfully!
+            </div>
+          ` : ''}
+
+        </div>
+      </form>
+    `;
+  }
+}
+
+customElements.define('customer-form', CustomerForm);
+
 render() {
     return html`
       <h2 style="text-align: center;">Add New Customer</h2>
@@ -1205,6 +1502,7 @@ can preview files like Aadhaar and photographs side by side, streamlining the ve
 st.download_button("⬇️ Download CSV", csv, "efficiency_data.csv", "text/csv")
 
 st.caption("Built with ❤️ using Streamlit")
+
 
 
 
