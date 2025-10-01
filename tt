@@ -1,117 +1,85 @@
-1. DTO (POJO)
+package com.sc.faas.resource;
 
-src/main/java/com/sc/faas/dto/TaskDto.java
-
-package com.sc.faas.dto;
-
-public class TaskDto {
-    private int id;
-    private String title;
-    private boolean completed;
-
-    public TaskDto(int id, String title, boolean completed) {
-        this.id = id;
-        this.title = title;
-        this.completed = completed;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public boolean isCompleted() {
-        return completed;
-    }
-}
-
-
----
-
-2. Service Layer
-
-src/main/java/com/sc/faas/service/ProcessService.java
-
-package com.sc.faas.service;
-
-import com.sc.faas.dto.TaskDto;
-import jakarta.enterprise.context.ApplicationScoped;
-
-import java.util.ArrayList;
-import java.util.List;
-
-@ApplicationScoped
-public class ProcessService {
-
-    private final List<TaskDto> tasks = new ArrayList<>();
-    private int counter = 1;
-
-    public TaskDto addTask(String title) {
-        TaskDto task = new TaskDto(counter++, title, false);
-        tasks.add(task);
-        return task;
-    }
-
-    public List<TaskDto> getTasks() {
-        return tasks;
-    }
-
-    public TaskDto completeTask(int id) {
-        for (TaskDto task : tasks) {
-            if (task.getId() == id) {
-                TaskDto updated = new TaskDto(task.getId(), task.getTitle(), true);
-                tasks.set(tasks.indexOf(task), updated);
-                return updated;
-            }
-        }
-        return null;
-    }
-}
-
-
----
-
-3. Function (REST Controller)
-
-src/main/java/com/sc/faas/Function.java
-
-package com.sc.faas;
-
-import com.sc.faas.dto.TaskDto;
+import com.sc.faas.dto.Task;
 import com.sc.faas.service.ProcessService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import java.net.URI;
 import java.util.List;
 
 @Path("/api/tasks")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class Function {
+public class ProcessResource {
 
     @Inject
     ProcessService processService;
 
-    @POST
-    public TaskDto addTask(@QueryParam("title") String title) {
-        return processService.addTask(title);
+    @GET
+    public Response getAllTasks() {
+        List<Task> tasks = processService.getAllTasks();
+        return Response.ok(tasks).build();
     }
 
     @GET
-    public List<TaskDto> getAllTasks() {
-        return processService.getTasks();
+    @Path("/{id}")
+    public Response getTaskById(@PathParam("id") Long id) {
+        Task task = processService.getTaskById(id);
+        if (task == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("{\"error\": \"Task with ID " + id + " not found\"}")
+                    .build();
+        }
+        return Response.ok(task).build();
+    }
+
+    @POST
+    public Response createTask(Task task) {
+        // Basic validation (enhance with @NotBlank later if needed)
+        if (task.title == null || task.title.trim().isEmpty()) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"error\": \"Task title is required\"}")
+                    .build();
+        }
+
+        Task created = processService.createTask(task.title, task.completed);
+        return Response.created(URI.create("/api/tasks/" + created.id))
+                .entity(created)
+                .build();
     }
 
     @PUT
-    @Path("/{id}/complete")
-    public TaskDto completeTask(@PathParam("id") int id) {
-        return processService.completeTask(id);
+    @Path("/{id}")
+    public Response updateTask(@PathParam("id") Long id, Task task) {
+        if (task.title == null || task.title.trim().isEmpty()) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"error\": \"Task title is required\"}")
+                    .build();
+        }
+
+        Task updated = processService.updateTask(id, task.title, task.completed);
+        if (updated == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("{\"error\": \"Task with ID " + id + " not found\"}")
+                    .build();
+        }
+        return Response.ok(updated).build();
+    }
+
+    @DELETE
+    @Path("/{id}")
+    public Response deleteTask(@PathParam("id") Long id) {
+        boolean deleted = processService.deleteTask(id);
+        if (!deleted) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("{\"error\": \"Task with ID " + id + " not found\"}")
+                    .build();
+        }
+        return Response.noContent().build();
     }
 }
-
 
 1. DTO (schema type)
 
