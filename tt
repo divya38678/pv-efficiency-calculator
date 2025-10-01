@@ -1,0 +1,365 @@
+1. DTO (POJO)
+
+src/main/java/com/sc/faas/dto/TaskDto.java
+
+package com.sc.faas.dto;
+
+public class TaskDto {
+    private int id;
+    private String title;
+    private boolean completed;
+
+    public TaskDto(int id, String title, boolean completed) {
+        this.id = id;
+        this.title = title;
+        this.completed = completed;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+}
+
+
+---
+
+2. Service Layer
+
+src/main/java/com/sc/faas/service/ProcessService.java
+
+package com.sc.faas.service;
+
+import com.sc.faas.dto.TaskDto;
+import jakarta.enterprise.context.ApplicationScoped;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@ApplicationScoped
+public class ProcessService {
+
+    private final List<TaskDto> tasks = new ArrayList<>();
+    private int counter = 1;
+
+    public TaskDto addTask(String title) {
+        TaskDto task = new TaskDto(counter++, title, false);
+        tasks.add(task);
+        return task;
+    }
+
+    public List<TaskDto> getTasks() {
+        return tasks;
+    }
+
+    public TaskDto completeTask(int id) {
+        for (TaskDto task : tasks) {
+            if (task.getId() == id) {
+                TaskDto updated = new TaskDto(task.getId(), task.getTitle(), true);
+                tasks.set(tasks.indexOf(task), updated);
+                return updated;
+            }
+        }
+        return null;
+    }
+}
+
+
+---
+
+3. Function (REST Controller)
+
+src/main/java/com/sc/faas/Function.java
+
+package com.sc.faas;
+
+import com.sc.faas.dto.TaskDto;
+import com.sc.faas.service.ProcessService;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import java.util.List;
+
+@Path("/api/tasks")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class Function {
+
+    @Inject
+    ProcessService processService;
+
+    @POST
+    public TaskDto addTask(@QueryParam("title") String title) {
+        return processService.addTask(title);
+    }
+
+    @GET
+    public List<TaskDto> getAllTasks() {
+        return processService.getTasks();
+    }
+
+    @PUT
+    @Path("/{id}/complete")
+    public TaskDto completeTask(@PathParam("id") int id) {
+        return processService.completeTask(id);
+    }
+}
+
+
+1. DTO (schema type)
+
+src/main/java/com/sc/faas/dto/TaskDto.java
+
+package com.sc.faas.dto;
+
+public class TaskDto {
+    private int id;
+    private String title;
+    private boolean completed;
+
+    public TaskDto() {}  // GraphQL needs no-arg constructor
+
+    public TaskDto(int id, String title, boolean completed) {
+        this.id = id;
+        this.title = title;
+        this.completed = completed;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+}
+
+
+---
+
+2. QueryService (GraphQL Query methods)
+
+src/main/java/com/sc/faas/service/QueryService.java
+
+package com.sc.faas.service;
+
+import com.sc.faas.dto.TaskDto;
+import jakarta.enterprise.context.ApplicationScoped;
+import org.eclipse.microprofile.graphql.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@ApplicationScoped
+@GraphQLApi
+public class QueryService {
+
+    private final List<TaskDto> tasks = new ArrayList<>();
+
+    public QueryService() {
+        // preload demo tasks
+        tasks.add(new TaskDto(1, "Learn Quarkus", false));
+        tasks.add(new TaskDto(2, "Build Experience API", false));
+    }
+
+    @Query("tasks")
+    public List<TaskDto> getTasks() {
+        return tasks;
+    }
+
+    @Query
+    public TaskDto getTaskById(@Name("id") int id) {
+        return tasks.stream()
+                .filter(t -> t.getId() == id)
+                .findFirst()
+                .orElse(null);
+    }
+}
+
+
+---
+
+3. MutationService (GraphQL Mutation methods)
+
+src/main/java/com/sc/faas/service/MutationService.java
+
+package com.sc.faas.service;
+
+import com.sc.faas.dto.TaskDto;
+import jakarta.enterprise.context.ApplicationScoped;
+import org.eclipse.microprofile.graphql.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@ApplicationScoped
+@GraphQLApi
+public class MutationService {
+
+    private final List<TaskDto> tasks = new ArrayList<>();
+    private int counter = 3;
+
+    public MutationService() {
+        tasks.add(new TaskDto(1, "Learn Quarkus", false));
+        tasks.add(new TaskDto(2, "Build Experience API", false));
+    }
+
+    @Mutation
+    public TaskDto addTask(@Name("title") String title) {
+        TaskDto task = new TaskDto(counter++, title, false);
+        tasks.add(task);
+        return task;
+    }
+
+    @Mutation
+    public TaskDto completeTask(@Name("id") int id) {
+        for (TaskDto task : tasks) {
+            if (task.getId() == id) {
+                TaskDto updated = new TaskDto(task.getId(), task.getTitle(), true);
+                tasks.set(tasks.indexOf(task), updated);
+                return updated;
+            }
+        }
+        return null;
+    }
+}
+
+
+---
+
+4. Function (GraphQL + REST Config)
+
+src/main/java/com/sc/faas/Function.java
+
+package com.sc.faas;
+
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Response;
+
+@Path("/api/experience")
+public class Function {
+
+    @GET
+    public Response hello() {
+        return Response.ok("Experience API is running with GraphQL!").build();
+    }
+}
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Task UI (Experience API)</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1 { color: #333; }
+    .task { margin: 5px 0; padding: 5px; border-bottom: 1px solid #ccc; }
+    button { margin-left: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Task Manager (GraphQL Experience API)</h1>
+
+  <div>
+    <input type="text" id="taskTitle" placeholder="Enter task title">
+    <button onclick="addTask()">Add Task</button>
+  </div>
+
+  <h2>Tasks</h2>
+  <div id="taskList"></div>
+
+  <script>
+    const API_URL = "http://localhost:8090/graphql"; // Experience API GraphQL endpoint
+
+    async function fetchTasks() {
+      const query = `
+        query {
+          tasks {
+            id
+            title
+            completed
+          }
+        }
+      `;
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query })
+      });
+      const result = await response.json();
+      renderTasks(result.data.tasks);
+    }
+
+    async function addTask() {
+      const title = document.getElementById("taskTitle").value;
+      if (!title) return;
+
+      const mutation = `
+        mutation {
+          addTask(title: "${title}") {
+            id
+            title
+            completed
+          }
+        }
+      `;
+      await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: mutation })
+      });
+      document.getElementById("taskTitle").value = "";
+      fetchTasks();
+    }
+
+    async function completeTask(id) {
+      const mutation = `
+        mutation {
+          completeTask(id: ${id}) {
+            id
+            title
+            completed
+          }
+        }
+      `;
+      await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: mutation })
+      });
+      fetchTasks();
+    }
+
+    function renderTasks(tasks) {
+      const container = document.getElementById("taskList");
+      container.innerHTML = "";
+      tasks.forEach(task => {
+        const div = document.createElement("div");
+        div.className = "task";
+        div.innerHTML = `
+          ${task.title} - ${task.completed ? "✅ Completed" : "❌ Pending"}
+          ${!task.completed ? <button onclick="completeTask(${task.id})">Complete</button> : ""}
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // load tasks when page starts
+    fetchTasks();
+  </script>
+</body>
+</html>
