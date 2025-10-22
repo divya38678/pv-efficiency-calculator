@@ -1,3 +1,34 @@
+Rewrite this LitElement component so that:
+
+1. Use `<sc-text-input>` for text fields, `<sc-date-input>` for dates, and `<sc-button>` for buttons.
+2. Make both buttons functional:
+   - The "Submit" button must validate all required fields.
+   - The "Exit" button should navigate to 'protegrity-dsg' using `navigation.go('protegrity-dsg')`.
+3. All required fields must show a visible red error message below them if left empty.
+4. Validation should run only after clicking Submit (not on every keystroke).
+5. Use correct Lit syntax: 
+   - `@click=${}` for events, 
+   - `.value=${}` for field values, 
+   - `?error=${}` and `error-message=${}` for error handling.
+6. Include `validateForm()` and `validateField()` methods that populate an `errors` object.
+7. Keep and initialize the following fields in `this.formData`:
+   - keyAlgorithm
+   - keyAlgorithmOthers
+   - keyName
+   - keyGenerationDate
+   - crReference
+   - keyBlobName
+   - expiryDate
+8. When the form is valid, log the data to console and show a success toast or message.
+9. When invalid, show a red alert message or use the component's built-in error style.
+10. Maintain clean indentation, readable structure, and correct LitElement property bindings.
+
+Finally, output the full corrected `KeyDetails.js` file ready to run.
+
+
+
+
+
 import { html, LitElement, css } from 'lit';
 
 export class CustomerForm extends LitElement {
@@ -1502,6 +1533,7 @@ can preview files like Aadhaar and photographs side by side, streamlining the ve
 st.download_button("⬇️ Download CSV", csv, "efficiency_data.csv", "text/csv")
 
 st.caption("Built with ❤️ using Streamlit")
+
 
 
 
